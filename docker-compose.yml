@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Python AI Agent service
+  ai-agent:
+    build:
+      context: ./ai-agent-python
+      dockerfile: Dockerfile
+    container_name: kubesent-ai-agent
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - HOST=0.0.0.0
+      - PORT=8000
+      - LOG_LEVEL=INFO
+      - MODEL_NAME=gemini-1.5-flash
+      - TEMPERATURE=0.3
+      - MAX_TOKENS=2048
+    volumes:
+      - ./ai-agent-python/app:/app/app
+    networks:
+      - kubesent-network
+    restart: unless-stopped
+
+  # Java Kubernetes Operator service (for local testing only)
+  # Note: In production, this runs inside the Kubernetes cluster
+  k8s-operator:
+    build:
+      context: ./k8s-operator-java
+      dockerfile: Dockerfile
+    container_name: kubesent-operator
+    ports:
+      - "8080:8080"
+    environment:
+      - KUBESENT_KUBERNETES_NAMESPACE=default
+      - KUBESENT_AI_AGENT_URL=http://ai-agent:8000
+      - KUBESENT_POD_WATCHER_LOG_LINES=50
+      - KUBESENT_REMEDIATION_CONFIDENCE_THRESHOLD=90.0
+      - KUBESENT_REMEDIATION_DRY_RUN=false
+    volumes:
+      # Mount kubeconfig for local development
+      - ~/.kube/config:/root/.kube/config:ro
+    networks:
+      - kubesent-network
+    depends_on:
+      - ai-agent
+    restart: unless-stopped
+
+networks:
+  kubesent-network:
+    driver: bridge

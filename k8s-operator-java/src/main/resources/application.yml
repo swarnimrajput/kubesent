@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: kubesent-operator
+
+kubesent:
+  # Kubernetes configuration
+  kubernetes:
+    namespace: default
+  
+  # AI Agent configuration
+  ai-agent:
+    url: http://localhost:8000
+  
+  # Pod watcher configuration
+  pod-watcher:
+    log-lines: 50
+  
+  # Remediation configuration
+  remediation:
+    confidence-threshold: 90.0
+    dry-run: false
+
+logging:
+  level:
+    com.kubesent: DEBUG
+    io.fabric8: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+

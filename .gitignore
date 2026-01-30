@@ -1,0 +1,26 @@
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & Temp
+*.log
+tmp/
+
+# Environment Variables (Safety)
+.env
+.env.*
+!.env.example
+
+# Build Artifacts
+target/
+build/
+dist/
+venv/
+__pycache__/
+*.class
